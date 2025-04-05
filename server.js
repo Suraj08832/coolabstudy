@@ -37,12 +37,12 @@ const authenticateToken = (req, res, next) => {
   const token = authHeader && authHeader.split(' ')[1];
 
   if (!token) {
-    return res.status(401).json({ message: 'Authentication required' });
+    return res.status(401).json({ error: 'Authentication required' });
   }
 
-  jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key', (err, user) => {
+  jwt.verify(token, 'your-secret-key', (err, user) => {
     if (err) {
-      return res.status(403).json({ message: 'Invalid token' });
+      return res.status(403).json({ error: 'Invalid token' });
     }
     req.user = user;
     next();
@@ -80,39 +80,44 @@ io.on('connection', (socket) => {
   // Handle authentication
   socket.on('authenticate', (token) => {
     try {
-      const user = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+      const user = jwt.verify(token, 'your-secret-key');
       connectedUsers.set(socket.id, user);
-      console.log('User authenticated:', user.userId);
+      console.log(`User ${user.username} authenticated`);
     } catch (error) {
       console.error('Authentication failed:', error);
       socket.disconnect();
     }
   });
 
-  // Whiteboard events
+  // Handle drawing events
   socket.on('draw', (data) => {
-    if (!connectedUsers.has(socket.id)) {
-      return;
+    const user = connectedUsers.get(socket.id);
+    if (user) {
+      socket.broadcast.emit('draw', {
+        ...data,
+        user: user.username
+      });
     }
-    console.log('Drawing data received:', data);
-    socket.broadcast.emit('draw', data);
   });
 
-  // Music sync events
+  // Handle music events
   socket.on('playMusic', (data) => {
-    if (!connectedUsers.has(socket.id)) {
-      return;
+    const user = connectedUsers.get(socket.id);
+    if (user) {
+      socket.broadcast.emit('playMusic', {
+        ...data,
+        user: user.username
+      });
     }
-    console.log('Music play event:', data);
-    socket.broadcast.emit('playMusic', data);
   });
 
-  socket.on('pauseMusic', (data) => {
-    if (!connectedUsers.has(socket.id)) {
-      return;
+  socket.on('pauseMusic', () => {
+    const user = connectedUsers.get(socket.id);
+    if (user) {
+      socket.broadcast.emit('pauseMusic', {
+        user: user.username
+      });
     }
-    console.log('Music pause event:', data);
-    socket.broadcast.emit('pauseMusic', data);
   });
 
   socket.on('disconnect', () => {
