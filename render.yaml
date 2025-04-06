@@ -2,6 +2,7 @@ services:
   - type: web
     name: collabstudy-frontend
     env: node
+    nodeVersion: 18.19.1
     buildCommand: |
       npm install
       npm install -g serve
