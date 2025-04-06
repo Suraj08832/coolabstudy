@@ -1,11 +1,25 @@
 services:
   - type: web
-    name: collabstudy
+    name: collabstudy-backend
     env: node
     buildCommand: npm install
-    startCommand: node server.js
+    startCommand: npm start
     envVars:
       - key: NODE_ENV
         value: production
       - key: PORT
-        value: 3000 
+        value: 3000
+      - key: JWT_SECRET
+        generateValue: true
+    healthCheckPath: /api/auth/test
+    autoDeploy: true
+
+  - type: web
+    name: collabstudy-frontend
+    env: node
+    buildCommand: cd collabstudy-react && npm install && npm run build
+    startCommand: cd collabstudy-react && serve -s build
+    envVars:
+      - key: REACT_APP_API_URL
+        value: https://collabstudy-backend.onrender.com
+    autoDeploy: true 

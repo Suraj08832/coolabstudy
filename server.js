@@ -7,17 +7,18 @@ const jwt = require('jsonwebtoken');
 const authRoutes = require('./routes/auth');
 const whiteboardRoutes = require('./routes/whiteboard');
 const musicRoutes = require('./routes/music');
+require('dotenv').config();
 
 const app = express();
 const server = http.createServer(app);
 
-// Enable CORS for all routes
+// Middleware
 app.use(cors({
-  origin: '*',
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  origin: process.env.NODE_ENV === 'production'
+    ? 'https://collabstudy-frontend.onrender.com'
+    : 'http://localhost:3001',
+  credentials: true
 }));
-
 app.use(express.json());
 
 // Log all requests with more details
@@ -65,8 +66,10 @@ app.get('/', (req, res) => {
 // Socket.IO setup
 const io = socketIo(server, {
   cors: {
-    origin: "*",
-    methods: ["GET", "POST"]
+    origin: process.env.NODE_ENV === 'production' 
+      ? 'https://collabstudy-frontend.onrender.com' 
+      : 'http://localhost:3001',
+    methods: ['GET', 'POST']
   }
 });
 
@@ -138,24 +141,10 @@ app.use((req, res) => {
   res.status(404).json({ error: 'Route not found' });
 });
 
+// Start server
 const PORT = process.env.PORT || 3000;
-
-// Function to start server
-function startServer() {
-  server.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-    console.log(`Visit http://localhost:${PORT} to access the application`);
-    console.log(`Test endpoint: http://localhost:${PORT}/api/auth/test`);
-  }).on('error', (err) => {
-    if (err.code === 'EADDRINUSE') {
-      console.error(`Port ${PORT} is already in use. Trying port ${PORT + 1}...`);
-      PORT = PORT + 1;
-      startServer();
-    } else {
-      console.error('Server error:', err);
-    }
-  });
-}
-
-// Start the server
-startServer(); 
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+  console.log(`Visit http://localhost:${PORT} to access the application`);
+  console.log(`Test endpoint: http://localhost:${PORT}/api/auth/test`);
+}); 
