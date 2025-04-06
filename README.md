@@ -1,6 +1,6 @@
-# CollabStudy - Collaborative Study Platform
+# CollabStudy Frontend
 
-A real-time collaborative study platform with whiteboard and synchronized music features.
+A modern React-based frontend for the CollabStudy application.
 
 ## Features
 
@@ -11,62 +11,39 @@ A real-time collaborative study platform with whiteboard and synchronized music 
 
 ## Deployment
 
-This project is configured for easy deployment on Render. Follow these steps:
-
-1. Fork this repository
-2. Create a Render account at https://render.com
-3. Connect your GitHub repository to Render
-4. Render will automatically detect the `render.yaml` file and set up both services:
-   - Backend service (Node.js)
-   - Frontend service (React)
-
-The services will be available at:
-- Backend: https://collabstudy-backend.onrender.com
-- Frontend: https://collabstudy-frontend.onrender.com
+The frontend is deployed on Render and can be accessed at:
+https://collabstudy-frontend.onrender.com
 
 ## Local Development
 
-### Backend Setup
+1. Clone the repository:
 ```bash
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
+git clone https://github.com/Suraj08832/coolabstudy.git
+cd coolabstudy/collabstudy-react
 ```
 
-### Frontend Setup
+2. Install dependencies:
 ```bash
-# Navigate to React app directory
-cd collabstudy-react
-
-# Install dependencies
 npm install
+```
 
-# Start development server
+3. Start the development server:
+```bash
 npm start
 ```
 
+The application will be available at http://localhost:3000
+
 ## Environment Variables
 
-### Backend (.env)
+Create a `.env` file in the `collabstudy-react` directory with:
 ```
-PORT=3000
-JWT_SECRET=your_jwt_secret
-NODE_ENV=development
-```
-
-### Frontend (.env)
-```
-PORT=3001
-REACT_APP_API_URL=http://localhost:3000
+REACT_APP_API_URL=https://collabstudy-backend.onrender.com
 ```
 
 ## Technologies Used
 
-- Node.js
-- Express
-- Socket.IO
 - React
 - Material-UI
-- Framer Motion 
+- Socket.IO Client
+- Axios 
