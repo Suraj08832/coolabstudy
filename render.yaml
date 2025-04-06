@@ -15,9 +15,13 @@ services:
   - type: web
     name: collabstudy-frontend
     env: node
-    rootDir: collabstudy-react
-    buildCommand: npm install && npm run build
-    startCommand: serve -s build
+    buildCommand: |
+      cd collabstudy-react
+      npm install
+      npm run build
+    startCommand: |
+      cd collabstudy-react
+      serve -s build
     envVars:
       - key: REACT_APP_API_URL
         value: https://collabstudy-backend.onrender.com
